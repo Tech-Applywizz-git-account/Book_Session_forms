@@ -1,66 +1,116 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 📧 1. Initialize EmailJS with your Public Key
-    // signup at emailjs.com to get this
-    // The email will NOT send until you replace these placeholders with real keys
-    const PUBLIC_KEY = "YOUR_PUBLIC_KEY"; 
-    const SERVICE_ID = "YOUR_SERVICE_ID";
-    const TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-
-    if (typeof emailjs !== 'undefined' && PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
-        emailjs.init(PUBLIC_KEY);
-    } else if (typeof emailjs === 'undefined') {
-        console.error("EmailJS library failed to load. Check your internet connection or script tag.");
-    }
-
+    // 🔌 Configuration — LIVE KEYS
+    const RAZORPAY_KEY = "rzp_live_SCjkNy569aq6F2"; 
+    const SUPABASE_URL = "https://vmknpibvavubiihffnet.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZta25waWJ2YXZ1YmlpaGZmbmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MDk4NTYsImV4cCI6MjA5MDA4NTg1Nn0.Wi7XM42eZaaT7FvfjjjZcSd0xxGBRv4ZRVvB4-acpkA";
+    
+    const CREATE_ORDER_URL = `${SUPABASE_URL}/functions/v1/smooth-function`;
+    const CAPTURE_PAYMENT_URL = `${SUPABASE_URL}/functions/v1/capture-razorpay-payment`;
+    
     const bookingForm = document.getElementById('bookingForm');
     
-    bookingForm.addEventListener('submit', (e) => {
+    bookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Get form data
         const formData = new FormData(bookingForm);
         const data = Object.fromEntries(formData.entries());
         
-        // Save to local storage for the success page
-        localStorage.setItem('bookingData', JSON.stringify(data));
-        
-        // Add loading state to button
         const btn = document.getElementById('bookBtn');
         btn.disabled = true;
-        btn.innerHTML = `<span>Scheduling...</span>`;
+        btn.innerHTML = `<span>Creating Order...</span>`;
 
-        const finalizeBooking = () => {
-            setTimeout(() => {
-                window.location.href = 'success.html';
-            }, 800);
-        };
+        try {
+            // 📞 Step 1: Create Order via Edge Function
+            const orderResponse = await fetch(CREATE_ORDER_URL, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                },
+                body: JSON.stringify({ 
+                    amount: "1.00",     // ₹1.00 (100 paise)
+                    currency: "INR"
+                })
+            });
 
-        // 📧 2. Send the Booking Email if EmailJS is configured
-        if (typeof emailjs !== 'undefined' && 
-            PUBLIC_KEY !== "YOUR_PUBLIC_KEY" &&
-            SERVICE_ID !== "YOUR_SERVICE_ID" && 
-            TEMPLATE_ID !== "YOUR_TEMPLATE_ID") {
+            const orderData = await orderResponse.json();
+            console.log("Order created:", orderData);
 
-            const emailParams = {
-                from_name: "Elite Coaching",
-                to_name: data.name,
-                user_email: data.email,
-                user_mobile: data.mobile,
-                reply_to: data.email
+            if (orderData.error) {
+                throw new Error(orderData.error);
+            }
+
+            if (!orderData.id) {
+                throw new Error("No order ID received from server");
+            }
+
+            // 💳 Step 2: Open Razorpay Checkout
+            const options = {
+                key: RAZORPAY_KEY,
+                order_id: orderData.id,
+                name: "Elite Coaching",
+                description: "Session Fee",
+                handler: async function (response) {
+                    console.log("Payment success:", response);
+                    btn.innerHTML = `<span>Recording Payment...</span>`;
+
+                    try {
+                        await fetch(CAPTURE_PAYMENT_URL, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                            },
+                            body: JSON.stringify({
+                                paymentId: response.razorpay_payment_id,
+                                orderId: response.razorpay_order_id,
+                                signature: response.razorpay_signature,
+                                email: data.email,
+                                name: data.name,
+                                amount: orderData.amount,
+                                currency: orderData.currency
+                            })
+                        });
+                    } catch (captureErr) {
+                        console.error("Capture error (non-blocking):", captureErr);
+                    }
+
+                    window.location.href = 'success.html';
+                },
+                prefill: {
+                    name: data.name,
+                    email: data.email,
+                    contact: data.mobile || ''
+                },
+                notes: {
+                    booking_type: "session",
+                    customer_name: data.name
+                },
+                theme: { color: "#3B82F6" },
+                modal: {
+                    ondismiss: function() {
+                        btn.disabled = false;
+                        btn.innerHTML = `<span>Book Session</span>`;
+                    }
+                }
             };
 
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, emailParams)
-                .then(() => {
-                    console.log("Email sent successfully!");
-                    finalizeBooking();
-                }, (error) => {
-                    console.error("Email failed to send. Error:", error);
-                    finalizeBooking();
-                });
-        } else {
-            const reason = (typeof emailjs === 'undefined') ? "Library missing" : "Keys are placeholders";
-            console.warn(`Email not sent: ${reason}. Please configure PUBLIC_KEY, SERVICE_ID, and TEMPLATE_ID in script.js.`);
-            finalizeBooking();
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                console.error("Payment failed:", response.error);
+                alert("Payment failed: " + response.error.description);
+                btn.disabled = false;
+                btn.innerHTML = `<span>Book Session</span>`;
+            });
+            rzp.open();
+
+        } catch (error) {
+            console.error("Payment flow error:", error);
+            alert("Error: " + error.message);
+            btn.disabled = false;
+            btn.innerHTML = `<span>Book Session</span>`;
         }
     });
 });
