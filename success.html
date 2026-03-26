@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful | Elite Coaching</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="container">
+        <section class="booking-card success-message">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            
+            <h1>Details Captured!</h1>
+            <p>One final step: Please click the button below to pick your final time on the Microsoft calendar and receive your Teams meeting link.</p>
+
+            <div class="teams-link-box">
+                <div id="bookingSummary" style="margin-bottom: 24px;">
+                    <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 4px;">Session for:</p>
+                    <p id="userName" style="font-weight: 600; font-size: 1.1rem; color: #fff;">[User Name]</p>
+                </div>
+                
+                <p style="font-size: 0.9rem; color: #94a3b8;">Join via Microsoft Teams:</p>
+                <a href="https://outlook.office.com/bookwithme/user/c08c0c094ef6470ba9a68c3cdbaf3ae3@Applywizz.com/meetingtype/z__-23cpUE6UKIlwHn50fA2?anonymous&ismsaljsauthenabled&ep=mlink" target="_blank" class="teams-btn">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V7h2v5z"/>
+                    </svg>
+                    Open Microsoft Teams Calendar
+                </a>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 12px;">The link will also be sent to your email.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+            if (bookingData) {
+                document.getElementById('userName').textContent = bookingData.name;
+            }
+        });
+    </script>
+</body>
+</html>

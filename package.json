@@ -1,0 +1,12 @@
+{
+  "name": "book-session-forms",
+  "version": "1.0.0",
+  "description": "Premium session booking form with Razorpay integration",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve ."
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}
