@@ -80,6 +80,10 @@
                     </a>
                     <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 16px; font-style: italic;">Confirmation and login details have been sent to your email.</p>
                 </div>
+                <!-- 🔄 REDIRECTION STATUS -->
+                <div style="margin-top: 24px; color: var(--primary-blue); font-weight: 500; font-size: 0.9rem;">
+                   Redirecting you to schedule your session...
+                </div>
             </div>
 
             <!-- 3. Error State (Hidden by default) -->
@@ -138,12 +142,17 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    // Success! Show content
+                    // 🎉 Success! Show content
                     document.getElementById('displayUserName').textContent = bookingData.name;
                     document.getElementById('displayUserEmail').textContent = bookingData.email;
                     
                     document.getElementById('verifyingState').classList.add('hidden');
                     document.getElementById('successState').classList.remove('hidden');
+
+                    // 🏁 AUTO-REDIRECT TO TEAMS AFTER 3 SECONDS
+                    setTimeout(() => {
+                        window.location.href = 'https://outlook.office.com/book/Book_Session@Wagetrail.com/';
+                    }, 3000);
                 } else {
                     throw new Error(result.error || "Failed to save details");
                 }
