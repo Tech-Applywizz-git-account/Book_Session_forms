@@ -32,12 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({
                     email: data.email,
-                    name: data.name,
-                    paymentId: `lead_${Date.now()}`,
-                    orderId: `unpaid_${Date.now()}`,
-                    amount: 1, // $1.00
+                    transaction_id: `lead_${Date.now()}`, // Matches schema
+                    order_id: `unpaid_${Date.now()}`,    // Matches schema
+                    amount: 1.00,
                     currency: 'USD',
-                    status: 'INITIATED'
+                    status: 'INITIATED',
+                    time_of_payment: new Date().toISOString(),
+                    metadata: { 
+                        customer_name: data.name,
+                        source: 'manual_paypal_link'
+                    }
                 })
             });
             console.log("Lead save status:", leadResponse.status);
