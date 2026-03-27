@@ -19,12 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         paypal.Buttons({
             style: { layout: 'vertical', color: 'gold', shape: 'rect' },
 
-            // 1. Create Server-side Order (Price hardcoded to $1.00 for security)
+            // 1. Create Server-side Order (Price hardcoded to $34.99 for security)
             createOrder: async () => {
                 const res = await fetch(CREATE_URL, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
-                    body: JSON.stringify({ amount: "1.00", currency: "USD" })
+                    body: JSON.stringify({ amount: "34.99", currency: "USD" })
                 });
                 const data = await res.json();
                 return data.id;
