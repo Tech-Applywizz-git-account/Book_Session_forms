@@ -134,6 +134,7 @@
                         time_of_payment: new Date().toISOString(),
                         metadata: {
                             customer_name: bookingData.name,
+                            mobile_number: bookingData.fullMobile,
                             payment_type: 'paypal_link_verified'
                         }
                     })

@@ -20,37 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
         btn.innerHTML = `<span>Saving Details...</span>`;
 
-        try {
-            // 📝 LEAD CAPTURE: Pre-save as 'INITIATED'
-            console.log("Saving initial lead to Supabase...");
-            const leadResponse = await fetch(`${SUPABASE_URL}/rest/v1/payment_details`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify({
-                    email: data.email,
-                    transaction_id: `lead_${Date.now()}`, // Matches schema
-                    order_id: `unpaid_${Date.now()}`,    // Matches schema
-                    amount: 1.00,
-                    currency: 'USD',
-                    status: 'INITIATED',
-                    time_of_payment: new Date().toISOString(),
-                    metadata: { 
-                        customer_name: data.name,
-                        mobile_number: fullMobile,
-                        source: 'manual_paypal_link'
-                    }
-                })
-            });
-            console.log("Lead save status:", leadResponse.status);
-        } catch (err) {
-            console.error("Lead capture error:", err);
-        }
-
         // 💳 OPEN PAYPAL
         window.open(PAYPAL_LINK, '_blank');
 
