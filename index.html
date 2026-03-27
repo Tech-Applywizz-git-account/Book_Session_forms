@@ -11,15 +11,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%231e3a8a%22/><circle cx=%2285%22 cy=%2215%22 r=%2212%22 fill=%22%23fbbf24%22/><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22 font-size=%2240%22>H1B</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- PayPal payment via external link -->
+    <!-- 💳 Official PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
 </head>
 
 <body>
-    <div class="background-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+    <div class="background-blobs"></div>
 
     <main class="container">
         <!-- 🏢 BRAND LOGO -->
@@ -32,8 +29,8 @@
         </div>
 
         <div class="card-header">
-            <h1>Book Your Session</h1>
-            <p>Fill in the details below to secure your one-on-one consultation.</p>
+            <h1 style="font-size: 1.6rem;">Book Your Session</h1>
+            <p style="font-size: 0.9rem;">Fill in your details and pay securely via PayPal to receive your Teams link.</p>
         </div>
 
         <form id="bookingForm" class="form-grid">
@@ -92,14 +89,8 @@
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn" id="bookBtn">
-                <span>Book Session</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-            </button>
+            <!-- 💳 PayPal Button Container -->
+            <div id="paypal-button-container" style="margin-top: 15px; position: relative; z-index: 1;"></div>
         </form>
         </section>
     </main>
