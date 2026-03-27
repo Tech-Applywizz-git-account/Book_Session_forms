@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch(CREATE_URL, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
-                    body: JSON.stringify({ amount: "30.00", currency: "USD" })
+                    body: JSON.stringify({ amount: "1.00", currency: "USD" })
                 });
                 const data = await res.json();
                 return data.id;
