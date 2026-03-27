@@ -20,8 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.innerHTML = `<span>Saving Details...</span>`;
 
         try {
-            // 📝 LEAD CAPTURE: Save details as 'INITIATED' so we don't lose the email
-            await fetch(`${SUPABASE_URL}/rest/v1/payment_details`, {
+            // 📝 LEAD CAPTURE: Pre-save as 'INITIATED'
+            console.log("Saving initial lead to Supabase...");
+            const leadResponse = await fetch(`${SUPABASE_URL}/rest/v1/payment_details`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -32,12 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     email: data.email,
                     name: data.name,
-                    transaction_id: `lead_${Date.now()}`,
+                    paymentId: `lead_${Date.now()}`,
+                    orderId: `unpaid_${Date.now()}`,
                     amount: 1, // $1.00
                     currency: 'USD',
                     status: 'INITIATED'
                 })
             });
+            console.log("Lead save status:", leadResponse.status);
         } catch (err) {
             console.error("Lead capture error:", err);
         }
