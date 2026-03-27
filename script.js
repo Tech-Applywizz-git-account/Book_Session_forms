@@ -12,9 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const formData = new FormData(bookingForm);
         const data = Object.fromEntries(formData.entries());
+        const fullMobile = `${data.countryCode} ${data.mobile}`;
         
         // Save form data to localStorage for the verification page
-        localStorage.setItem('bookingData', JSON.stringify(data));
+        localStorage.setItem('bookingData', JSON.stringify({ ...data, fullMobile }));
         
         btn.disabled = true;
         btn.innerHTML = `<span>Saving Details...</span>`;
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     time_of_payment: new Date().toISOString(),
                     metadata: { 
                         customer_name: data.name,
+                        mobile_number: fullMobile,
                         source: 'manual_paypal_link'
                     }
                 })
