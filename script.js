@@ -61,19 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                         },
                         body: JSON.stringify({
-                            transaction_id: order.id,
-                            order_id: `ord_${Date.now()}`,
-                            status: 'COMPLETED',
+                            paymentId: order.id,      // Match Edge Function variable name
+                            orderId: `ord_${Date.now()}`,
                             email: formProps.email,
-                            amount: 1.00,
+                            name: formProps.name,      // Match Edge Function direct variable
+                            mobile: fullMobile,        // Sending mobile for updated Edge Function
+                            amount: 100,               // Send as 100 subunits (Edge function divides by 100)
                             currency: 'USD',
-                            time_of_payment: new Date().toISOString(),
-                            metadata: {
-                                customer_name: formProps.name,
-                                mobile_number: fullMobile,
-                                paypal_order_id: order.id,
-                                payment_status: order.status
-                            }
+                            signature: 'paypal_verified'
                         })
                     });
 
