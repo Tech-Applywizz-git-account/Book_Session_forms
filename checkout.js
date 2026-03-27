@@ -2,91 +2,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // 🔌 Configuration
     const SUPABASE_URL = "https://vmknpibvavubiihffnet.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZta25waWJ2YXZ1YmlpaGZmbmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MDk4NTYsImV4cCI6MjA5MDA4NTg1Nn0.Wi7XM42eZaaT7FvfjjjZcSd0xxGBRv4ZRVvB4-acpkA";
-    const CAPTURE_URL = `${SUPABASE_URL}/functions/v1/capture-razorpay-payment`; // Reusing your existing automation function
+    
+    // 🛠️ URLs for your new workflow (Server-side)
+    const CREATE_URL = `${SUPABASE_URL}/functions/v1/create-paypal-order`;
+    const CAPTURE_URL = `${SUPABASE_URL}/functions/v1/capture-paypal-payment`;
 
     const bookingData = JSON.parse(localStorage.getItem('bookingData'));
-
     if (bookingData) {
-        document.getElementById('userName').textContent = bookingData.name || 'Your Name';
+        document.getElementById('userName').textContent = bookingData.name || 'User';
     } else {
-        // ⚠️ Safety: Redirect back if no data found
-        window.location.href = 'index.html';
+        window.location.href = 'index.html'; // ⚠️ Safety if no data
         return;
     }
 
-    // 💳 Initialize PayPal Buttons
     if (window.paypal) {
         paypal.Buttons({
-            style: {
-                layout: 'vertical',
-                color:  'gold',
-                shape:  'rect',
-                label:  'paypal'
-            },
+            style: { layout: 'vertical', color: 'gold', shape: 'rect' },
 
-            // 🛒 CREATE THE TRANSACTION
-            createOrder: (data, actions) => {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: '1.00' // $1.00 USD
-                        },
-                        description: 'Consultation Session - Wage Trail'
-                    }]
+            // 1. Create Server-side Order (Price hardcoded to $1.00 for security)
+            createOrder: async () => {
+                const res = await fetch(CREATE_URL, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+                    body: JSON.stringify({ amount: "30.00", currency: "USD" })
                 });
+                const data = await res.json();
+                return data.id;
             },
 
-            // ✅ PAYMENT APPROVED
+            // 2. Capture Server-side Payment & Setup Account
             onApprove: async (data, actions) => {
                 try {
-                    const order = await actions.order.capture();
-                    console.log("PayPal Order Captured:", order);
+                    const [firstName, ...rest] = bookingData.name.split(' ');
+                    const lastName = rest.join(' ') || 'User';
 
-                    // 🚀 SAVE TO SUPABASE (Stage 2 - Confirmed)
-                    const response = await fetch(CAPTURE_URL, {
+                    const res = await fetch(CAPTURE_URL, {
                         method: 'POST',
                         headers: { 
                             'Content-Type': 'application/json',
-                            'apikey': SUPABASE_ANON_KEY,
                             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                         },
                         body: JSON.stringify({
-                            paymentId: order.id,      // Match Edge Function variable name
-                            orderId: `ord_${Date.now()}`,
+                            orderId: data.orderID,
                             email: bookingData.email,
-                            name: bookingData.name,      // Match Edge Function direct variable
-                            mobile: bookingData.fullMobile, // Sending mobile for updated Edge Function
-                            amount: 100,               // Send as 100 subunits (Edge function divides by 100)
-                            currency: 'USD',
-                            signature: 'paypal_verified'
+                            firstName: firstName,
+                            lastName: lastName,
+                            mobile: bookingData.fullMobile
                         })
                     });
 
-                    if (response.ok) {
-                        window.location.href = 'success.html';
+                    const result = await res.json();
+                    if (result.success) {
+                        window.location.href = 'success.html'; // 🎉 Success!
                     } else {
-                        const err = await response.json();
-                        throw new Error(err.message || "Failed to record payment");
+                        throw new Error(result.error || "Internal Server error");
                     }
-
                 } catch (err) {
-                    console.error("Payment Capture Failed:", err);
-                    alert("Payment successful but storage failed. Please contact support with Order ID: " + data.orderID);
+                    console.error("Capture Failed:", err);
+                    alert("Payment received but account setup failed: " + err.message);
                 }
-            },
-
-            // ❌ PAYMENT CANCELLED
-            onCancel: (data) => {
-                console.log("Payment cancelled by user.");
-            },
-
-            // ⚠️ ERROR
-            onError: (err) => {
-                console.error("PayPal SDK Error:", err);
-                alert("The PayPal system encountered an error. Please try again or use a different card.");
             }
         }).render('#paypal-button-container');
-    } else {
-        console.error("PayPal SDK failed to load. Check your Client ID.");
     }
 });
