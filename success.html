@@ -121,13 +121,17 @@
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                     },
                     body: JSON.stringify({
-                        paymentId: `pp_${Date.now()}`, // Consistent PayPal ID format
-                        orderId: `ord_${Date.now()}`,
-                        signature: 'paypal_verified',
+                        transaction_id: `pp_${Date.now()}`, // Matches schema exactly
+                        order_id: `ord_${Date.now()}`,       // Matches schema exactly
+                        status: 'COMPLETED',
                         email: bookingData.email,
-                        name: bookingData.name,
-                        amount: 100, // $1.00
-                        currency: 'USD'
+                        amount: 1.00,
+                        currency: 'USD',
+                        time_of_payment: new Date().toISOString(),
+                        metadata: {
+                            customer_name: bookingData.name,
+                            payment_type: 'paypal_link_verified'
+                        }
                     })
                 });
 
