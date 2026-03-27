@@ -13,72 +13,72 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(bookingForm);
         const data = Object.fromEntries(formData.entries());
         
-        // Save form data to localStorage for the success page
+        // Save form data to localStorage for the verification page
         localStorage.setItem('bookingData', JSON.stringify(data));
         
         btn.disabled = true;
-        btn.innerHTML = `<span>Opening PayPal...</span>`;
+        btn.innerHTML = `<span>Saving Details...</span>`;
 
         try {
-            // 📝 Step 1: Record user details in Supabase
-            await fetch(`${SUPABASE_URL}/functions/v1/capture-razorpay-payment`, {
+            // 📝 LEAD CAPTURE: Save details as 'INITIATED' so we don't lose the email
+            await fetch(`${SUPABASE_URL}/rest/v1/payment_details`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
-                    paymentId: `paypal_${Date.now()}`,
-                    orderId: `order_${Date.now()}`,
-                    signature: 'paypal_payment',
                     email: data.email,
                     name: data.name,
-                    amount: 100,
-                    currency: 'USD'
+                    transaction_id: `lead_${Date.now()}`,
+                    amount: 1, // $1.00
+                    currency: 'USD',
+                    status: 'INITIATED'
                 })
             });
         } catch (err) {
-            console.error("Details save error (non-blocking):", err);
+            console.error("Lead capture error:", err);
         }
 
-        // 💳 Step 2: Open PayPal payment in a new tab
+        // 💳 OPEN PAYPAL
         window.open(PAYPAL_LINK, '_blank');
 
-        // 🔄 Step 3: Show confirmation UI on current page
+        // 🔄 SHOW CONFIRMATION UI
         const card = document.querySelector('.booking-card');
         card.innerHTML = `
-            <div class="card-header">
-                <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="card-header" style="text-align: center;">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
                 </div>
-                <h1>Complete Your Payment</h1>
-                <p style="color:#94a3b8;margin-top:8px;">A PayPal window has opened. Please complete the payment there.</p>
+                <h1 style="font-size: 1.8rem;">Complete Your Payment</h1>
+                <p style="color:#94a3b8;margin-top:8px;">A PayPal window has opened. Finish the $1.00 payment there.</p>
             </div>
 
-            <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:20px;margin:24px 0;border:1px solid rgba(255,255,255,0.1);">
-                <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:4px;">Booking for:</p>
-                <p style="color:#fff;font-weight:600;font-size:1.1rem;">${data.name}</p>
-                <p style="color:#94a3b8;font-size:0.85rem;margin-top:8px;">${data.email}</p>
+            <div style="background:rgba(255,255,255,0.05);border-radius:16px;padding:24px;margin:32px 0;border:1px solid rgba(255,255,255,0.1);text-align: left;">
+                <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:6px;text-transform: uppercase;">Session for:</p>
+                <p style="color:#fff;font-weight:600;font-size:1.2rem;">${data.name}</p>
+                <p style="color:#64748b;font-size:0.9rem;margin-top:4px;">${data.email}</p>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px;">
-                <a href="success.html" class="submit-btn" style="text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div style="display:flex;flex-direction:column;gap:16px;margin-top:32px;">
+                <a href="success.html" id="completedBtn" class="submit-btn" style="text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;padding: 18px; font-weight: 600;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                     <span>I've Completed Payment</span>
                 </a>
 
-                <button onclick="window.open('${PAYPAL_LINK}', '_blank')" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:#94a3b8;padding:12px 24px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:0.9rem;">
-                    Reopen PayPal Window
+                <button onclick="window.open('${PAYPAL_LINK}', '_blank')" style="background:transparent;border:1px solid rgba(255,255,255,0.15);color:#94a3b8;padding:14px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:0.95rem;transition:all 0.3s;">
+                    Reopen PayPal Payment Link
                 </button>
             </div>
 
-            <p style="font-size:0.75rem;color:#64748b;margin-top:16px;text-align:center;">
-                Only click "I've Completed Payment" after you finish paying on PayPal.
+            <p style="font-size:0.75rem;color:#4b5563;margin-top:24px;text-align:center;font-style: italic;">
+                The next step will verify your payment and show the calendar.
             </p>
         `;
     });

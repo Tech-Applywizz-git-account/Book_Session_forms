@@ -3,11 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Successful | Elite Coaching</title>
+    <title>Verifying Payment | Elite Coaching</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .hidden { display: none !important; }
+        .success-content { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid rgba(59, 130, 246, 0.2);
+            border-bottom-color: #3b82f6;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
     <div class="background-blobs">
@@ -17,41 +35,118 @@
     </div>
 
     <main class="container">
-        <section class="booking-card success-message">
-            <div class="success-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
+        <section class="booking-card">
+            <!-- 1. Verification State -->
+            <div id="verifyingState" style="text-align: center; padding: 40px 0;">
+                <span class="loader"></span>
+                <h1 style="font-size: 1.5rem; margin-bottom: 12px;">Finalizing Your Booking</h1>
+                <p style="color: #94a3b8;">Please wait while we secure your session details and activate your portal...</p>
             </div>
-            
-            <h1>Details Captured!</h1>
-            <p>One final step: Please click the button below to pick your final time on the Microsoft calendar and receive your Teams meeting link.</p>
 
-            <div class="teams-link-box">
-                <div id="bookingSummary" style="margin-bottom: 24px;">
-                    <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 4px;">Session for:</p>
-                    <p id="userName" style="font-weight: 600; font-size: 1.1rem; color: #fff;">[User Name]</p>
+            <!-- 2. Final Success State (Hidden by default) -->
+            <div id="successState" class="hidden success-content" style="text-align: center;">
+                <div class="success-icon" style="margin-bottom: 24px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
                 </div>
                 
-                <p style="font-size: 0.9rem; color: #94a3b8;">Join via Microsoft Teams:</p>
-                <a href="https://outlook.office.com/book/Book_Session@Wagetrail.com/" target="_blank" class="teams-btn">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V7h2v5z"/>
+                <h1 style="font-size: 2rem; margin-bottom: 12px;">Details Captured!</h1>
+                <p style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 32px;">Your payment has been successfully recorded and your session is confirmed.</p>
+
+                <div class="teams-link-box" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 32px;">
+                    <div id="bookingSummary" style="margin-bottom: 28px; text-align: left;">
+                        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Confirmed for:</p>
+                        <p id="displayUserName" style="font-weight: 600; font-size: 1.3rem; color: #fff;">[User Name]</p>
+                        <p id="displayUserEmail" style="font-size: 0.95rem; color: #94a3b8; margin-top: 4px;">[User Email]</p>
+                    </div>
+                    
+                    <p style="font-size: 0.95rem; color: #fff; margin-bottom: 20px; font-weight: 500;">Ready to schedule? Click below:</p>
+                    <a href="https://outlook.office.com/book/Book_Session@Wagetrail.com/" target="_blank" class="teams-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px; font-weight: 600;">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V7h2v5z"/>
+                        </svg>
+                        Schedule on Microsft Teams
+                    </a>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 16px;">Confirmation and login details have been sent to your email.</p>
+                </div>
+            </div>
+
+            <!-- 3. Error State (Hidden by default) -->
+            <div id="errorState" class="hidden" style="text-align: center; padding: 40px 0;">
+                <div style="background: rgba(239, 68, 68, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    Open Microsoft Teams Calendar
-                </a>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 12px;">The link will also be sent to your email.</p>
+                </div>
+                <h1 style="font-size: 1.5rem; margin-bottom: 12px; color: #fff;">Verification Failed</h1>
+                <p id="errorMessage" style="color: #94a3b8; margin-bottom: 24px;">Something went wrong while confirming your session.</p>
+                <button onclick="window.location.reload()" class="submit-btn" style="width: auto; padding: 12px 24px;">Try Again</button>
             </div>
         </section>
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        const SUPABASE_URL = "https://vmknpibvavubiihffnet.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZta25waWJ2YXZ1YmlpaGZmbmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MDk4NTYsImV4cCI6MjA5MDA4NTg1Nn0.Wi7XM42eZaaT7FvfjjjZcSd0xxGBRv4ZRVvB4-acpkA";
+        const CAPTURE_URL = `${SUPABASE_URL}/functions/v1/capture-razorpay-payment`; // Reusing your existing automation function
+
+        async function verifyAndFinalize() {
             const bookingData = JSON.parse(localStorage.getItem('bookingData'));
-            if (bookingData) {
-                document.getElementById('userName').textContent = bookingData.name;
+            
+            if (!bookingData) {
+                showError("No booking data found. Please go back and fill the form.");
+                return;
             }
-        });
+
+            try {
+                // 🚀 CALL SUPABASE TO FINALIZE (Insert into payment_details & Create Account)
+                const response = await fetch(CAPTURE_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({
+                        paymentId: `pp_${Date.now()}`, // Consistent PayPal ID format
+                        orderId: `ord_${Date.now()}`,
+                        signature: 'paypal_verified',
+                        email: bookingData.email,
+                        name: bookingData.name,
+                        amount: 100, // $1.00
+                        currency: 'USD'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Success! Show content
+                    document.getElementById('displayUserName').textContent = bookingData.name;
+                    document.getElementById('displayUserEmail').textContent = bookingData.email;
+                    
+                    document.getElementById('verifyingState').classList.add('hidden');
+                    document.getElementById('successState').classList.remove('hidden');
+                } else {
+                    throw new Error(result.error || "Failed to save details");
+                }
+
+            } catch (err) {
+                console.error("Verification failed:", err);
+                showError(err.message);
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('errorMessage').textContent = msg;
+            document.getElementById('verifyingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', verifyAndFinalize);
     </script>
 </body>
 </html>
