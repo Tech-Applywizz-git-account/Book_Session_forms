@@ -48,14 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // 🔄 SHOW CONFIRMATION UI
         const card = document.querySelector('.booking-card');
         card.innerHTML = `
-            <div class="card-header" style="text-align: center;">
-                <div style="width:64px;height:64px;border-radius:50%;background: linear-gradient(135deg, var(--primary-yellow), #f59e0b); display:flex;align-items:center;justify-content:center;margin:0 auto 20px; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
+            <!-- 🏢 BRAND LOGO -->
+            <div class="logo-area">
+                <div class="h1b-logo">H1-B</div>
+                <div class="logo-text">
+                    <span class="wage">Wage</span>
+                    <span class="trail">Trail</span>
                 </div>
-                <h1 style="font-size: 1.8rem; color: var(--primary-blue);">Complete Your Payment</h1>
-                <p style="color:var(--text-muted);margin-top:8px;">A PayPal window has opened. Finish the $1.00 payment there.</p>
+            </div>
+
+            <div class="card-header" style="text-align: center;">
+                <h1 style="font-size: 1.6rem; color: var(--primary-blue); margin-bottom: 8px;">Complete Your Payment</h1>
+                <p style="color:var(--text-muted);margin-top:4px;">A PayPal window has opened. Finish the $1.00 payment there.</p>
             </div>
 
             <div style="background: #f8fafc; border-radius:16px; padding:24px; margin:32px 0; border: 1px solid var(--border-color); text-align: left;">

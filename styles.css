@@ -16,10 +16,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
     background-color: var(--bg-light);
     color: var(--text-main);
     display: flex;
@@ -29,7 +29,6 @@ body {
     padding: 20px;
 }
 
-/* Background Accents (Subtle) */
 .background-blobs {
     position: fixed;
     top: 0;
@@ -38,68 +37,125 @@ body {
     height: 100%;
     z-index: -1;
     overflow: hidden;
-    background: radial-gradient(circle at 0% 0%, rgba(30, 58, 138, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+    background: radial-gradient(circle at 0% 0%, rgba(30, 58, 138, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
 }
 
 .container {
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
 }
 
 .booking-card {
     background: var(--card-bg);
-    padding: 40px;
-    border-radius: 24px;
+    padding: 32px;
+    border-radius: 20px;
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--border-color);
 }
 
+/* --- LOGO SECTION --- */
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.h1b-logo {
+    position: relative;
+    width: 54px;
+    height: 50px;
+    background: var(--primary-blue);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 1.1rem;
+    transform: rotate(-3deg);
+    box-shadow: 0 4px 8px rgba(30, 58, 138, 0.2);
+}
+
+.h1b-logo::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 14px;
+    height: 14px;
+    background: var(--primary-yellow);
+    border-radius: 50%;
+    border: 3px solid white;
+}
+
+.logo-text {
+    line-height: 1.1;
+}
+
+.logo-text .wage {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+    display: block;
+}
+
+.logo-text .trail {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary-yellow);
+    display: block;
+}
+
+/* --- FORM COMPONENTS --- */
 .card-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
 }
 
 .card-header h1 {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--primary-blue);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .card-header p {
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
 .form-grid {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .input-group label {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 700;
     color: var(--primary-blue);
     text-transform: uppercase;
-    letter-spacing: 0.025em;
+    letter-spacing: 0.05em;
 }
 
 .input-group input {
     background: #f1f5f9;
     border: 1px solid var(--border-color);
-    padding: 14px 16px;
-    border-radius: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
     color: var(--text-main);
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: all 0.2s ease;
 }
 
@@ -107,43 +163,49 @@ body {
     outline: none;
     background: #fff;
     border-color: var(--input-focus);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* SMALL YELLOW BUTTON */
 .submit-btn {
-    background: var(--primary-blue);
-    color: white;
+    background: var(--primary-yellow);
+    color: var(--primary-blue);
     border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 800;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    transition: all 0.3s ease;
+    gap: 8px;
+    transition: all 0.2s ease;
     margin-top: 10px;
+    width: fit-content;
+    align-self: flex-start; /* Aligns to left like a "compact" button */
+    box-shadow: 0 4px 6px rgba(251, 191, 36, 0.2);
 }
 
 .submit-btn:hover {
-    background: #1e3a8a;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.2);
+    background: #eab308;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(251, 191, 36, 0.3);
 }
 
 .submit-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+    background: #94a3b8;
+    color: white;
 }
 
-/* Success Styles */
+/* Success Elements */
 .success-icon {
     width: 60px;
     height: 60px;
-    background: #ecfdf5;
-    color: #10b981;
+    background: #f0fdf4;
+    color: #16a34a;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -155,22 +217,18 @@ body {
     background: var(--primary-blue);
     color: #fff;
     text-decoration: none;
-    padding: 16px;
-    border-radius: 12px;
+    padding: 14px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    font-weight: 600;
-    transition: 0.3s;
+    gap: 10px;
+    font-weight: 700;
+    transition: 0.2s;
+    font-size: 0.95rem;
 }
 
 .teams-btn:hover {
     background: #172554;
-    transform: scale(1.02);
-}
-
-/* Custom Yellow Accent for icons/links */
-.accent-yellow {
-    color: var(--primary-yellow);
+    transform: translateY(-2px);
 }
