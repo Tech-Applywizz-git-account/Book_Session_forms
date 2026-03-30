@@ -206,8 +206,12 @@ body {
 }
 
 .mobile-input-wrapper select {
-    width: 100px;
+    width: 110px;
     cursor: pointer;
+    padding-right: 30px; /* Space for the arrow */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .mobile-input-wrapper input {
