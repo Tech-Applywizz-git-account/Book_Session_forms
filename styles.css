@@ -128,6 +128,47 @@ body {
     line-height: 1.5;
 }
 
+.discount-highlight {
+    background: #fff7ed;
+    color: #c2410c;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    display: inline-block;
+    margin-top: 16px;
+    border: 1px solid #ffedd5;
+    box-shadow: 0 2px 4px rgba(194, 65, 12, 0.1);
+    animation: highlightPulse 2s infinite ease-in-out;
+}
+
+.pricing-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.new-price {
+    color: var(--primary-blue);
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+@keyframes highlightPulse {
+    0% { transform: translateY(0); box-shadow: 0 2px 4px rgba(194, 65, 12, 0.1); }
+    50% { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(194, 65, 12, 0.15); }
+    100% { transform: translateY(0); box-shadow: 0 2px 4px rgba(194, 65, 12, 0.1); }
+}
+
 .form-grid {
     display: flex;
     flex-direction: column;
